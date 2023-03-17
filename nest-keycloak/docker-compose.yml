@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+    ports:
+      - 8080:8080
+      - 8443:8443
+    volumes:
+      - keycloak-data:/opt/jboss/keycloak/standalone/data
+    networks:
+      - app-network
+
+  app:
+    build: .
+    ports:
+      - 3020:3020
+    environment:
+      - KEYCLOAK_URL=http://keycloak:8080/auth
+    depends_on:
+      - keycloak
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  keycloak-data:
+
